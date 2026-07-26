@@ -1,6 +1,16 @@
 import customtkinter as ctk
 import winsound
 import json
+import os
+import sys
+
+def resource_path(relative_path):
+    """Return the correct path for bundled resources."""
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 # ---------------- Appearance ---------------- #
 ctk.set_appearance_mode("light")
@@ -45,10 +55,10 @@ def show_popup(message, percent, threshold):
     current_threshold = get_threshold()
 
     app = ctk.CTk()
-    app.iconbitmap("assets/logo.ico")
+    app.iconbitmap(resource_path("assets/logo.ico"))
 
     winsound.PlaySound(
-    "assets/notification.wav",
+    resource_path("assets/notification.wav"),
     winsound.SND_FILENAME | winsound.SND_ASYNC
     )
 
