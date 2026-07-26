@@ -12,6 +12,16 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+def settings_path():
+    """Return the path to settings.json in AppData."""
+    appdata = os.getenv("LOCALAPPDATA")
+    folder = os.path.join(appdata, "BatteryDetector")
+
+    os.makedirs(folder, exist_ok=True)
+
+    return os.path.join(folder, "settings.json")
+
+
 # ---------------- Appearance ---------------- #
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
@@ -31,7 +41,7 @@ def save_threshold(choice):
 
     value = int(choice.replace("%", ""))
 
-    with open("settings.json", "w") as file:
+    with open(settings_path(), "w") as file:
         json.dump(
             {"threshold": value},
             file,
@@ -40,7 +50,7 @@ def save_threshold(choice):
 
 def get_threshold():
     try:
-        with open("settings.json", "r") as file:
+        with open(settings_path(), "r") as file:
             settings = json.load(file)
             return settings["threshold"]
     except:
