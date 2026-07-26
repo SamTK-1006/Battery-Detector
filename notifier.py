@@ -21,7 +21,6 @@ def settings_path():
 
     return os.path.join(folder, "settings.json")
 
-
 # ---------------- Appearance ---------------- #
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
@@ -230,6 +229,6 @@ def show_popup(message, percent, threshold):
         command = snooze
     )
     snooze_button.grid(row = 0, column = 1, padx = 10)
-
+    
     app.mainloop()
     return result
