@@ -2,9 +2,13 @@ import customtkinter as ctk
 import psutil
 import os
 import sys
-from startup import (enable_startup, disable_startup, startup_enabled)
+
+from startup import enable_startup, disable_startup, startup_enabled
+from notifier import save_threshold, get_threshold
+
 
 # ---------------- Appearance ---------------- #
+
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
@@ -25,10 +29,11 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+# ---------------- Dashboard ---------------- #
+
 def open_dashboard():
     app = ctk.CTk()
     app.title("Battery Detector")
-    app.geometry("360x320")
     app.resizable(False, False)
     app.configure(fg_color=BACKGROUND)
     app.iconbitmap(resource_path("assets/logo.ico"))
@@ -36,7 +41,7 @@ def open_dashboard():
     # ---------------- Center Window ---------------- #
 
     width = 360
-    height = 330
+    height = 410
 
     screen_w = app.winfo_screenwidth()
     screen_h = app.winfo_screenheight()
@@ -87,24 +92,23 @@ def open_dashboard():
     )
     status_label.grid(row=3, column=0)
 
-    # ---------------- Update ---------------- #
+    # ---------------- Live Update ---------------- #
 
     def update():
-
         battery = psutil.sensors_battery()
 
         if battery is not None:
-
             battery_label.configure(
                 text=f"{battery.percent:.0f}%"
             )
 
             progress.set(battery.percent / 100)
 
-            if battery.power_plugged:
-                status = "Charging ⚡"
-            else:
-                status = "Not Charging - On Battery🔋"
+            status = (
+                "Charging ⚡"
+                if battery.power_plugged
+                else "Not Charging - On Battery 🔋"
+            )
 
             status_label.configure(
                 text=f"Status: {status}"
@@ -119,6 +123,8 @@ def open_dashboard():
 
     update()
 
+    # ---------------- Startup ---------------- #
+
     def toggle_startup():
         if startup_checkbox.get():
             enable_startup()
@@ -126,14 +132,14 @@ def open_dashboard():
             disable_startup()
 
     startup_checkbox = ctk.CTkCheckBox(
-    app,
-    text="Start with Windows",
-    command=toggle_startup,
-    text_color=TEXT,
-    fg_color=PRIMARY,
-    hover_color=PRIMARY_HOVER,
-    border_color=PRIMARY,
-    checkmark_color="white"
+        app,
+        text="Start with Windows",
+        command=toggle_startup,
+        text_color=TEXT,
+        fg_color=PRIMARY,
+        hover_color=PRIMARY_HOVER,
+        border_color=PRIMARY,
+        checkmark_color="white"
     )
 
     startup_checkbox.grid(row=4, column=0, pady=(20, 10))
@@ -142,6 +148,37 @@ def open_dashboard():
         startup_checkbox.select()
     else:
         startup_checkbox.deselect()
+
+    # ---------------- Alert Threshold ---------------- #
+
+    threshold_label = ctk.CTkLabel(
+        app,
+        text=f"Alert Battery Percentage: {get_threshold()}%",
+        font=("Segoe UI", 14),
+        text_color=SUBTEXT
+    )
+    threshold_label.grid(row=5, column=0, pady=(8, 5))
+
+    def update_threshold(choice):
+        save_threshold(choice)
+        threshold_label.configure(
+            text=f"Alert Battery Percentage: {choice}"
+        )
+
+    threshold_dropdown = ctk.CTkOptionMenu(
+        app,
+        values=["80%", "85%", "90%", "95%", "100%"],
+        command=update_threshold,
+        fg_color=PRIMARY,
+        button_color=PRIMARY,
+        button_hover_color=PRIMARY_HOVER,
+        dropdown_fg_color=BACKGROUND,
+        dropdown_hover_color=PRIMARY,
+        text_color="white"
+    )
+
+    threshold_dropdown.grid(row=6, column=0, pady=(0, 15))
+    threshold_dropdown.set(f"{get_threshold()}%")
 
     # ---------------- Close Button ---------------- #
 
@@ -155,6 +192,7 @@ def open_dashboard():
         corner_radius=12,
         command=app.destroy
     )
-    close_button.grid(row=5, column=0, pady=(10, 20))
+
+    close_button.grid(row=7, column=0, pady=(10, 20))
 
     app.mainloop()
