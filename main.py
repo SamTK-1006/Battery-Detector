@@ -2,6 +2,7 @@ import time
 import psutil
 import json
 from notifier import show_popup, settings_path
+from dashboard import open_dashboard
 import os
 import sys
 import pystray
@@ -29,7 +30,9 @@ def create_tray():
     image = Image.open(resource_path("assets/logo.ico"))
 
     menu = pystray.Menu(
-        pystray.MenuItem("Exit", quit_app)
+    pystray.MenuItem("Open Dashboard", lambda icon, item: open_dashboard()),
+    pystray.Menu.SEPARATOR,
+    pystray.MenuItem("Exit", quit_app)
     )
 
     icon = pystray.Icon(
