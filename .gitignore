@@ -1,7 +1,20 @@
+# Python
 __pycache__/
-*.pyc
-.venv/
+*.py[cod]
+*.pyo
+
+# Virtual environment
 venv/
-.env
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# IDE
 .vscode/
 .idea/
+
+# OS
+.DS_Store
+Thumbs.db
