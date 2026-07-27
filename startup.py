@@ -23,9 +23,12 @@ def enable_startup():
 
     shortcut = shell.CreateShortCut(shortcut_path())
 
-    shortcut.Targetpath = sys.executable
-    shortcut.WorkingDirectory = os.path.dirname(sys.executable)
-    shortcut.IconLocation = sys.executable
+    if getattr(sys, "frozen", False):
+        shortcut.Targetpath = sys.executable
+        shortcut.WorkingDirectory = os.path.dirname(sys.executable)
+        shortcut.IconLocation = sys.executable
+    else:
+        return
 
     shortcut.save()
 
