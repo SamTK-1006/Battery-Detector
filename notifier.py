@@ -87,7 +87,7 @@ def show_popup(message, percent):
     # ---------------- Center Window ---------------- #
 
     width = 460
-    height = 440
+    height = 380
 
     screen_w = app.winfo_screenwidth()
     screen_h = app.winfo_screenheight()

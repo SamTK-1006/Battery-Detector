@@ -96,7 +96,6 @@ def battery_monitor():
                     "To help preserve battery health,\n"
                     "consider unplugging the charger.",
                     battery.percent,
-                    threshold,
                 )
 
                 already_notified = True
